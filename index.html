@@ -1,0 +1,290 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/moon.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-markdown>
+					## Perl の正規表現（仮題）
+					#### 講師:USP友の会 鳥海秀一
+				</section>
+				<section data-markdown>
+					## 改め
+				</section>
+				<section data-markdown>
+					## Perl ワンライナー入門
+				</section>
+				<section data-markdown>
+					### Perlワンライナー入門（全2回）
+					* 第1回：Perlワンライナー入門
+					* 第2回：Perl正規表現入門
+				</section>
+				<section data-markdown>
+					### 改題の理由
+					* 午前の部は初心者むけのはず
+						* Perlの正規表現の部分だけの解説は不親切
+					* 講師の勉強が間に合わなかった
+				</section>
+				<section data-markdown>
+					#### 講師： 鳥海秀一
+					* Perl歴：0年
+					* こんな講師でごめんなさい
+				</section>
+				<section data-markdown>
+					### 講義を始める前に
+					### 解決しなければなら
+					### ないある疑問が…
+				</section>
+				<section data-markdown>
+					### シェル芸にPerlってありなの？
+				</section>
+				<section data-markdown>
+					### シェル芸の定義
+					マウスも使わず、ソースコードも残さず、GUIツールを立ち上げる間もなく、あらゆる調査・計算・テキスト処理をCLI端末へのコマンド入力一撃で終わらすこと。あるいはそのときのコマンド入力のこと。
+				</section>
+				<section data-markdown>
+					### シェル芸にPerlってありなの？
+					* ありです
+					* 何かの縛りが欲しい方はご自由に
+						* disっているわけではありません
+						* 何らかの制約は時に有用です
+				</section>
+				<section data-markdown>
+					### シェル芸にルールはないの？
+					* 最小限主義のルールはあるかも（講師の感想）
+				</section>
+				<section data-markdown>
+					### 最小限主義？
+					* ここでは問題にあった最小限の道具を使うと格好よいという意味
+						* grepで済む問題に対しては、grepを
+						* sedで済む問題に対しては、sedを
+						* awkで済む問題に対しては、awkを使う
+					* 必然的にPerlは最後の方の選択肢				
+				</section>
+				<section data-markdown>
+					### Perlはいつ使ったら良いの
+					* 前回のシェル芸勉強会の問題とかに使ったら良いのではないでしょうか（講師の感想）
+				</section>
+				<section data-markdown>
+					### というとで
+				</section>
+				<section data-markdown>
+					### 皆さんPerlを使いましょう
+				</section>
+				<section data-markdown>
+					シェル芸午前の部
+					### Perl一行野郎入門
+					#### 講師:USP友の会 鳥海秀一
+				</section>
+				<section data-markdown>
+					### 講義の前提
+					* 何らかのプログラミング言語を知っていることを前提とします
+				</section>
+				<section data-markdown>
+					### 参考書
+					* プログラミングPerl（オライリー・ジャパン）
+					* はじめてのPerl（オライリー・ジャパン）
+					* ミニマルPerl（オライリー・ジャパン）
+				</section>
+				<section data-markdown>
+					### Perl言語とは
+					* 1987年に登場
+					* ラリー・ウォールによって開発
+					* 「実用的なデータ取得レポート作成言語」または
+					* 「病的折衷主義のガラクタ出力装置」の略語とされる
+					* 最新のバージョンは6
+					* 一般的にPerlといった場合はバージョン5系のこと
+						* 午前の勉強会でもPerl5を扱う
+				</section>
+				<section data-markdown>
+					### Perlワンライナーの書き方
+					* perl -[eE以外のオプション] -e '_code_'
+					* perl -[eE以外のオプション] -E '_code_'
+				</section>
+				<section data-markdown>
+					### Perlを記述するときの注意点
+					* スカラー変数の前には$が必要
+					* リスト変数（配列）の前には@が必要
+					* 丸括弧は省略可能な場合が多い
+					* if文、while文、for文のあとのブレスは省略不可
+						* 単文には後置制御文を使う
+					* 改行は文の区切りにならない（;を使う）
+					* 最後の文の後の;は省略可能
+					* コンテキストを意識する必要がある
+					* bool型は存在しない
+				</section>
+				<section data-markdown>
+					### コンテキスト
+					* 操作の振る舞いを変化させるスクリプト中の位置のこと
+					* Perlには次の２種類のコンテキストがある
+						* スカラーコンテキスト
+						* リストコンテキスト
+				</section>
+				<section data-markdown>
+					### bool型は存在しない
+					* Perlが偽と評価する値は次の通り
+						* 空文字列
+						* 文字列の"0"
+						* 数値の0
+					* 偽以外は全て真
+				</section>
+				<section data-markdown>
+					### ワンライナーを支援するPerlの機能
+					* 未定義の変数が使用可能
+					* ダイヤモンド演算子
+					* 豊富な特殊変数
+					* 豊富な起動オプション
+					* 強力すぎる正規表現（次回に解説）
+				</section>
+				<section data-markdown>
+					### 未定義の変数が使用可能
+					* まだ1回も値が代入されていない変数が使える
+					* 初期化されていない変数の値はコンテキストによって変わる
+						* 文字列としては空文字列
+						* 数値としては0
+						* bool値としては偽
+					* 警告が欲しい方は、wオプションをどうぞ
+				</section>
+				<section data-markdown>
+					### ダイヤモンド演算子
+					* Unixのコマンドの振る舞いを真似るための演算子
+					* スカラーコンテキストでは入力ソースの次の1行を返す
+					* リストコンテキストでは入力ソースの行のリストを返す
+				</section>
+				<section data-markdown>
+					### 豊富な特殊変数１
+					* $_（ドル・アンダースコア）
+						* 数多くの操作のデフォルト引数
+						* AWKでは$0
+					* $.（ドル・ドット）
+						* 現在の入力レコードのレコード番号
+						* AWKではNR
+				</section>
+				<section data-markdown>
+					### 豊富な特殊変数２
+					* $/（ドル・スラッシュ）
+						* 入力レコードセパレータ
+						* AWKではRS
+					* $\（ドル・バックスラッシュ）
+						* 出力レコードセパレータ
+						* AWKではORS
+				</section>
+				<section data-markdown>
+					### 豊富な特殊変数３
+					* $ARGV（ドル・アーグヴィー）
+						* 現在の入力ソースのファイル名
+						* STDINでは"-"
+						* AWKではFILENAME
+					* ARGV（アーグヴィー）（変数ではない）
+						* 現在の入力ソースのファイルハンドル
+						* AWKでは対応するものなし
+					* @ARGV（アット・アーグヴィー）
+						* プログラム引数の配列
+						* AWKではARGV
+				</section>
+				<section data-markdown>
+					### 豊富な特殊変数４
+					* $"（ドル・ダブルクォート）
+						* ダブルクォートで囲んだ配列の各要素の間に自動的に挿入する文字
+						* AWKでは対応するものなし
+					* $,（ドル・コンマ）
+						* print文の引数の間に出力する文字
+						* AWKではOFS
+				</section>
+				<section data-markdown>
+					### 豊富な特殊変数
+					* 一旦この辺で中断
+					* 詳しく知りたい方は、man perlvarコマンドで
+				</section>
+				<section data-markdown>
+					### 豊富な起動オプション１
+					* -e '_code_'（codeの実行）
+						* _code_をプログラムとしてPerlに実行させる
+					* -w（警告）
+						* 警告メッセージを有効にする
+				</section>
+				<section data-markdown>
+					### 豊富な起動オプション２
+					* -n（読み込み）
+						* $_にレコードを格納する暗黙の読み込みループを要求する
+					* -p（読み込んで出力）
+						* $_にレコードを格納してその内容に処理を施してから自動的に出力する
+				</section>
+				<section data-markdown>
+					### 豊富な起動オプション３
+					* -a（フィールド処理）
+						* -n や -p といっしょに用いると自動的にレコードをフィールドに分割して配列 @F に格納する
+					* -F’_sep_'（フィールド処理）
+						* -a のフィールドセパレータを_sep_とする
+				</section>
+				<section data-markdown>
+					### 豊富な起動オプション４
+					* -l（行末処理）
+						* 入力レコードからの入力セパレータの削除と出力レコードへの出力セパレータの挿入を自動で行う
+					* -0_digits_（レコードセパレータの設定）
+						* レコードの末尾を表す文字を8進数で定義
+						* -0のみでnull文字を指定したことになる
+						* -00では改行のみの行が区切りとなる
+						* -0777でファイル全体が1レコードとなる
+				</section>
+				<section data-markdown>
+					### 豊富な起動オプション５
+					* -s（スイッチ処理）
+						* スイッチ処理を有効にする
+				</section>
+				<section data-markdown>
+					### 豊富な起動オプション６
+					* -M'_mod_name_'（モジュールロード）
+						* 指定されたモジュールをロードする
+					* -C_[number/list]_（Unicode機能制御）
+						* 指定の入出力ストリームの文字コードをUTF-8と仮定する
+				</section>
+				<section data-markdown>
+					### 豊富な起動オプション
+					* まだまだある
+					* 詳しく知りたい方は、man perlrunコマンドで
+				</section>
+				<section data-markdown>
+					### 続きは次回で
+					#### ご静聴ありがとうございました
+				</section>
+			</div>
+		</div>
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
